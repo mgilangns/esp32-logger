@@ -1,0 +1,27 @@
+name: Build EXE
+on: [push] # 1. TRIGGER: Tells GitHub to start building the second you save this file.
+
+jobs:
+  build:
+    runs-on: windows-latest # 2. ENVIRONMENT: GitHub boots up a brand-new, clean Windows virtual machine.
+    steps:
+    - uses: actions/checkout@v3 # 3. COPY: The virtual machine copies your 'logger.py' script from your repository.
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4 # 4. INSTALL PYTHON: It installs Python onto its own cloud system.
+      with:
+        python-version: '3.10'
+        
+    - name: Install Dependencies
+      run: |
+        pip install pyinstaller pyserial # 5. INSTALL LIBRARIES: It installs 'pyserial' (to talk to the USB port) and 'pyinstaller'.
+        
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --onefile logger.py # 6. COMPILATION: It compiles your python code into a standalone Windows executable.
+        
+    - name: Upload EXE
+      uses: actions/upload-artifact@v4 # 7. DELIVERY: It takes the finished 'logger.exe' from its system and pairs it to your GitHub account as a download link.
+      with:
+        name: Compiled-Logger
+        path: dist/logger.exe
